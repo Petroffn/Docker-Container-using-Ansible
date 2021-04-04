@@ -3,6 +3,10 @@
   hosts: all
   become: yes
 
+  vars:
+  sourse_file: "/root/Desktop/index.html"
+  destin_file: /var/www/html
+
   tasks:
   -name: Config Docker Repo
    yum_repository:
@@ -53,9 +57,7 @@
        state: directory
 
    - name: Copying the HTML code in the Directory
-     copy: 
-       src: "/root/Desktop/index.html"
-       dest: "/root/pv"
+     copy: src={{ sourse_file }} dest={{ destin_file }} mode=0555
 
    - name: Launching an HTTPD Container
      when: thirdfail == false
