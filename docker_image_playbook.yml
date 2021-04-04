@@ -1,0 +1,72 @@
+---
+- name: Check Connection to my servers
+  hosts: all
+  become: yes
+
+  tasks:
+  -name: Config Docker Repo
+   yum_repository:
+     name: Docker 
+     description: "Docker Repo"
+     baseurl: "https://download.docker.com/linux/centos/docker-ce.repo" 
+     gpgcheck: no
+  register: x
+
+  - name: Check Config Status
+    debug:
+      var: firstfail
+
+  - name: Install Docker
+    packege:
+      name: "docker-ce-cli-20.10.5-3.el7.x86_64"
+      state: present
+    register: y
+
+  - name: Check Install Status
+    debug:
+      var: secodffail
+  
+  - name: Start Docker Demon
+    service:
+      name: docker
+      state: started
+      enabled: yes
+    when: secodffail == false
+
+  - name: Install
+    command: "pip Install docker-py"
+
+  - name: Pull a docker image
+    docker_image
+      name: httpd
+      tag: latest
+      source: Pull
+    register: z
+
+  - name: Check Pull Status
+    debug:
+      var: thirdfail
+
+  name: Creating a Persistent Volume Dir
+     file:
+       path: "/root/pv"
+       state: directory
+
+   - name: Copying the HTML code in the Directory
+     copy: 
+       src: "/root/Desktop/index.html"
+       dest: "/root/pv"
+
+   - name: Launching an HTTPD Container
+     when: thirdfail == false
+     docker_container:
+
+       name: apache-server
+       image: httpd
+       state: started
+       exposed_ports:
+         - "80"
+       ports:
+         - "7777:80"
+       volumes: 
+         - /root/pv:/usr/local/apache2/htdocs
