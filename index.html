@@ -1,0 +1,30 @@
+<HTML>
+<HEAD>
+<TITLE>Nikolai Petrov</TITLE>
+<SCRIPT LANGUAGE="JavaScript">
+     var sizes = new Array(0,1,2,4,8,10,12);
+     sizes.pos = 0;
+
+function Elastic()
+{
+     var el = document.all.elastic
+     if (null == el.direction)el.direction =1
+     else if ((sizes.pos > sizes.length -2) || (0 == sizes.pos))
+     el.direction *= -1
+     el.style.letterSpacing = sizes[sizes.pos += el.direction]
+setTimeout('Elastic()',100)
+}
+
+</SCRIPT>
+<BODY bgcolor="white" onLoad=Elastic()>
+<CENTER>
+<br><br><br><br>
+<br><br><br><br>
+<font color="gray"><h1>I wanna be a DevOps Engineer at Codica</h1>
+<font color="blue"><H2 ID "elastic" ALIGN="Center"><a href="https://github.com/Petroffn/">Github</a></H2>
+<font color="blue"><H2 ID "elastic" ALIGN="Center"><a href=https://docs.google.com/document/d/14heEKDc_wIuBg1FRAVtfjx2eWhFxOayrHc2iyFQI_KQ/edit?usp=sharing>My CV</a></H2>
+<font color="blue"><H2 ID "elastic" ALIGN="Center"><a href=https://www.linkedin.com/in/nikolai-petrov-46165b87/>My linkedin</a></H2>
+<font color="blue"><H2 ID "elastic" ALIGN="Center"><a href=https://github.com/Petroffn/Ansible/blob/master/playbook3.yml>WebServer Build by ANSIBLE</a> 
+
+</body>
+</HTML>

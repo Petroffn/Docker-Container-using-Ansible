@@ -4,44 +4,44 @@
   become: yes
 
   vars:
-  sourse_file: "/root/Desktop/index.html"
-  destin_file: /var/www/html
+    sourse_file: "./index.html"
+    destin_file: /var/www/html
 
   tasks:
-  -name: Config Docker Repo
-   yum_repository:
-     name: Docker 
-     description: "Docker Repo"
-     baseurl: "https://download.docker.com/linux/centos/docker-ce.repo" 
-     gpgcheck: no
-  register: x
+  - name: Config Docker Repository
+    yum_repository:
+      name: Docker 
+      description: "Docker Repository"
+      baseurl: "https://download.docker.com/linux/centos/docker-ce.repo" 
+      gpgcheck: no
+    register: x
 
-  - name: Check Config Status
+  - name: Checking Configuration Status
     debug:
-      var: firstfail
+      var: x.failed
 
-  - name: Install Docker
-    packege:
-      name: "docker-ce-cli-20.10.5-3.el7.x86_64"
+  - name: Installing Docker
+    package:
+      name: "docker-ce-20.10.5-3.el7.x86_64.rpm"
       state: present
     register: y
 
   - name: Check Install Status
     debug:
-      var: secodffail
+      var: y.failed
   
   - name: Start Docker Demon
     service:
       name: docker
       state: started
       enabled: yes
-    when: secodffail == false
+    when: y.failed == false
 
   - name: Install
     command: "pip Install docker-py"
 
   - name: Pull a docker image
-    docker_image
+    docker_image:
       name: httpd
       tag: latest
       source: Pull
@@ -49,19 +49,19 @@
 
   - name: Check Pull Status
     debug:
-      var: thirdfail
+      var: z
 
-  name: Creating a Persistent Volume Dir
-     file:
-       path: "/root/pv"
+  - name: Creating a Persistent Volume Dir
+    file:
+       path: "/var/www/html"
        state: directory
 
-   - name: Copying the HTML code in the Directory
-     copy: src={{ sourse_file }} dest={{ destin_file }} mode=0555
+  - name: Copying the HTML code in the Directory
+    copy: src={{ sourse_file }} dest={{ destin_file }} mode=0555
 
-   - name: Launching an HTTPD Container
-     when: thirdfail == false
-     docker_container:
+  - name: Launching an HTTPD Container
+    when: z.failed == false
+    docker_container:
 
        name: apache-server
        image: httpd
